@@ -1,0 +1,124 @@
+
+% Base de fatos com jogos e suas características
+
+jogo(the_witcher_3, [desenvolvedor('CD Projekt Red'), ano_lancamento(2015),
+faixa_etaria(18),rpg, mundo_aberto, fantasia, singleplayer, narrativo, acao]).
+jogo(stardew_valley,
+[desenvolvedor('ConcernedApe'),ano_lancamento(2016),faixa_etaria(7),simulacao, 
+agricultura, pixel_art, single_player, relaxante, crafting, multiplayer]).
+jogo(cyberpunk_2077,  [desenvolvedor('CD Projekt 
+Red'),ano_lancamento(2020),faixa_etaria(18),rpg, mundo_aberto, futurista, singleplayer, 
+narrativo, acao]).
+jogo(rocket_league, 
+[desenvolvedor('Psyonix'),ano_lancamento(2015),faixa_etaria(7),esportes, multiplayer, 
+competitivo, cooperativo, ritmo_rapido]).
+jogo(elden_ring, 
+[desenvolvedor('FromSoftware'),ano_lancamento(2022),faixa_etaria(18),rpg, mundo_aberto, 
+fantasia, singleplayer, cooperativo, desafiador, acao]).
+jogo(dark_souls_3, 
+[desenvolvedor('FromSoftware'),ano_lancamento(2016),faixa_etaria(18),rpg, fantasia, 
+singleplayer, desafiador, acao]).
+jogo(red_dead_redemption_2, [desenvolvedor('Rockstar 
+Games'),ano_lancamento(2018),faixa_etaria(18),aventura, mundo_aberto, faroeste, 
+singleplayer, multiplayer, narrativo]).
+jogo(grand_theft_auto_v, [desenvolvedor('Rockstar 
+Games'),ano_lancamento(2013),faixa_etaria(18),acao, aventura, mundo_aberto, singleplayer, 
+multiplayer, crime, exploracao]).
+jogo(counter_strike_2, [desenvolvedor('Valve'),ano_lancamento(2023),faixa_etaria(18),fps, 
+multiplayer, competitivo, tiro, acao]).
+jogo(hollow_knight, [desenvolvedor('Team 
+Cherry'),ano_lancamento(2017),faixa_etaria(7),plataforma, metroidvania, singleplayer, 
+desafiador, indie]).
+jogo(day_z, [desenvolvedor('Bohemia 
+Interactive'),ano_lancamento(2013),faixa_etaria(18),sobrevivencia, multiplayer, zumbi, 
+mundo_aberto, acao, tiro]).
+jogo(sons_of_the_forest, [desenvolvedor('
+Endnight Games Ltd'),faixa_etaria(18),ano_lancamento(2023),sobrevivencia, multiplayer, 
+terror, mundo_aberto, crafting]).
+jogo(battlefield_v, [desenvolvedor('DICE'),ano_lancamento(2018),faixa_etaria(18),fps, 
+multiplayer, guerra, acao, multiplayer, singleplayer, tiro]).
+jogo(ark_survival_evolved, [desenvolvedor('
+Studio Wildcard, Instinct Games, Efecto Studios, Virtual Basement 
+LLC'),ano_lancamento(2015),faixa_etaria(16),sobrevivencia, multiplayer, mundo_aberto, 
+dinossauros, crafting]).
+jogo(path_of_exile, [desenvolvedor('
+Grinding Gear Games'),ano_lancamento(2013),faixa_etaria(16),rpg, multiplayer, fantasia,
+hack_and_slash, free_to_play]).
+jogo(bloons_td_6, [desenvolvedor('Ninja 
+Kiwi'),ano_lancamento(2018),faixa_etaria(7),estrategia, tower_defense, singleplayer,
+cooperativo, casual]).
+jogo(dying_light, [desenvolvedor('Techland'),ano_lancamento(2015),faixa_etaria(18),acao,
+aventura, sobrevivencia, zumbi, mundo_aberto, parkour, tiro]).
+jogo(farcry_5, [desenvolvedor('Ubisoft 
+Montreal'),ano_lancamento(2018),faixa_etaria(18),acao, aventura, fps, mundo_aberto, 
+singleplayer, multiplayer, tiro]).
+jogo(rainbow_six_siege, [desenvolvedor('Ubisoft 
+Montreal'),ano_lancamento(2015),faixa_etaria(18),fps, multiplayer, tatico, competitivo, 
+cooperativo, tiro]).
+jogo(forza_horizon_5, [desenvolvedor('
+Playground Games'),ano_lancamento(2021),faixa_etaria(7),corrida, mundo_aberto, 
+multiplayer, singleplayer, simulacao, esportes]).
+
+
+% Regras
+
+% Regra que recomenda jogos com base nas características passadas
+
+recomendar_jogo(Jogo, Preferencias) :-
+    jogo(Jogo, Caracteristicas),
+    todas_caracteristicas_presentes(Preferencias, Caracteristicas).
+    
+% Verifica se as caracteristicas passadas batem com as existentes
+
+todas_caracteristicas_presentes([], _).
+todas_caracteristicas_presentes([P|Preferencias], Caracteristicas) :-
+    member(P, Caracteristicas),
+    todas_caracteristicas_presentes(Preferencias, Caracteristicas).
+
+% Regra para sugerir jogos similares com base em um jogo específico
+
+jogos_similares(Jogo, JogosSimilares) :-
+    jogo(Jogo, Caracteristicas),
+    findall(OutroJogo, (jogo(OutroJogo, OutrasCaracteristicas),
+                        OutroJogo \= Jogo,
+                        intersection(Caracteristicas, OutrasCaracteristicas, Comuns),
+                        length(Comuns, NumComuns),
+                        NumComuns >= 4), JogosSimilares).
+
+% Regra para sugerir jogos com base no desenvolvedor
+
+recomendar_por_desenvolvedor(Desenvolvedor, Jogos) :-
+findall(Jogo, (jogo(Jogo, Caracteristicas),
+               member(desenvolvedor(Desenvolvedor), Caracteristicas)), Jogos).
+
+% Regra para sugerir jogos com base na faixa etária
+
+recomendar_por_faixa_etaria(FaixaEtaria, Jogos) :-
+    findall(Jogo, (jogo(Jogo, Caracteristicas),
+                   member(faixa_etaria(FaixaEtaria), Caracteristicas)), Jogos).
+            
+% Regra para sugerir jogos multiplayer
+
+jogos_multiplayer(Jogos) :-
+findall(Jogo, (jogo(Jogo, Caracteristicas),
+               member(multiplayer, Caracteristicas)), Jogos).
+
+% Regra para sugerir jogos singleplayer
+
+jogos_singleplayer(Jogos) :-
+findall(Jogo, (jogo(Jogo, Caracteristicas),
+               member(singleplayer, Caracteristicas)), Jogos).
+
+% Regra para jogos recentes
+
+jogos_recentes(Jogos) :-
+    findall(Jogo, (jogo(Jogo, Caracteristicas),
+                   member(ano_lancamento(Ano), Caracteristicas),
+                   Ano >= 2020), Jogos).
+
+% Regra para jogos antigos
+
+jogos_antigos(Jogos) :-
+    findall(Jogo, (jogo(Jogo, Caracteristicas),
+                   member(ano_lancamento(Ano), Caracteristicas),
+                   Ano =< 2015), Jogos).
